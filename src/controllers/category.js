@@ -1,12 +1,13 @@
+const { category } = require('../../models');
 exports.addCategory = async (req,res) => {
     try {
-        const { name } = req.body;
+        let data = await category.create(req.body);
         res.send({
             status: "success",
             data: {
                 product: {
-                    id: 1,
-                    name: name
+                    id: data.id,
+                    name: data.name
                 }
             }
         })
@@ -21,19 +22,15 @@ exports.addCategory = async (req,res) => {
 
 exports.getAllCategory = async (req,res) => {
     try {
+        const categories = await category.findAll({
+            attributes: {
+                exclude: ["createdAt", "updatedAt"],
+            }
+        });
         res.send({
             status: "success",
             data: {
-                categories: [
-                    {
-                        id : 1,
-                        name: "Tech"
-                    },
-                    {
-                        id: 2,
-                        name: "Working"
-                    }
-                ]
+                categories
             }
         })
     }catch (err){
@@ -48,14 +45,15 @@ exports.getAllCategory = async (req,res) => {
 exports.getCategoryDetail = async (req,res) => {
     const { id } = req.params;
     try {
+        const data = await category.findOne({
+            where: {id},
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        })
         res.send({
             status: "success",
-            data: {
-                category: {
-                    id: id,
-                    name: "Tech"
-                }
-            }
+            data
         })
     }catch (err){
         console.log(err)
@@ -67,15 +65,33 @@ exports.getCategoryDetail = async (req,res) => {
 }
 
 exports.updateCategory = async (req,res) => {
-    const { id } = req.params;
-    const { name } = req.body
     try {
+        const { id } = req.params;
+        const newData = req.body;
+        const data = await category.findOne({
+            where: {
+                id
+            }
+        });
+
+        if(!data){
+            return res.send({
+                message: `category with ID: ${id} not found!`
+            })
+        }
+
+        await category.update(newData, {
+            where: {
+                id: id
+            }
+        });
+
         res.send({
             status: "success",
             data: {
                 category: {
                     id: id,
-                    name: name,
+                    name: newData.name,
                 }
             }
         })
@@ -89,8 +105,13 @@ exports.updateCategory = async (req,res) => {
 }
 
 exports.deleteCategory = async (req,res) => {
-    const { id } = req.params;
     try {
+        const { id } = req.params;
+        await category.destroy({
+            where: {
+                id
+            }
+        });
         res.send({
             status: "success",
             data: {

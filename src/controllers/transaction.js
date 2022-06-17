@@ -1,17 +1,15 @@
+const {transaction, user, product} = require('../../models');
+
 exports.addTransaction = async (req,res) => {
     try {
-        const { idProduct, idSeller, price } = req.body;
+        const data = req.body;
+
+        let createData = await transaction.create(data);
+
         res.send({
-            status: "success",
-            data: {
-                transaction: {
-                    id: 1,
-                    idProduct: idProduct,
-                    idBuyer: 2,
-                    idSeller: idSeller,
-                    price: price
-                }
-            }
+            status: 'success',
+            message: 'Add transaction finished',
+            createData
         });
     }catch (err){
         console.log(err)
@@ -24,76 +22,40 @@ exports.addTransaction = async (req,res) => {
 
 exports.getAllTransaction = async (req,res) => {
     try {
-        res.send({
-            status: "success",
-            data: {
-                transaction: [
-                    {
-                        id: 1,
-                        product: {
-                            id: 2,
-                            image: "keyboard.png",
-                            title: "Keyboard",
-                            desc: "The best Keyboard ..."
-                        },
-                        buyer: {
-                            id: 3,
-                            name: "Yosep Alexander",
-                            email: "yosepgans@mail.com"
-                        },
-                        seller: {
-                            id: 1,
-                            name: "Admin",
-                            email: "admin@mail.com"
-                        },
-                        price: 3500000,
-                        status: "success"
-                    },
-                    {
-                        id: 1,
-                        product: {
-                            id: 2,
-                            image: "keyboard.png",
-                            title: "Keyboard",
-                            desc: "The best Keyboard ..."
-                        },
-                        buyer: {
-                            id: 3,
-                            name: "Yosep Alexander",
-                            email: "yosepgans@mail.com"
-                        },
-                        seller: {
-                            id: 1,
-                            name: "Admin",
-                            email: "admin@mail.com"
-                        },
-                        price: 3500000,
-                        status: "success"
-                    },
-                    {
-                        id: 1,
-                        product: {
-                            id: 2,
-                            image: "keyboard.png",
-                            title: "Keyboard",
-                            desc: "The best Keyboard ..."
-                        },
-                        buyer: {
-                            id: 3,
-                            name: "Yosep Alexander",
-                            email: "yosepgans@mail.com"
-                        },
-                        seller: {
-                            id: 1,
-                            name: "Admin",
-                            email: "admin@mail.com"
-                        },
-                        price: 3500000,
-                        status: "success"
-                    },
-                ]
-            }
+
+        const data = await transaction.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'idBuyer', 'idSeller', 'idProduct']
+            },
+            include: [
+                {
+                    model: product,
+                    as: 'product',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'idUser', 'qty', 'price']
+                    }
+                },
+                {
+                    model: user,
+                    as: 'buyer',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'password', 'status']
+                    }
+                },
+                {
+                    model: user,
+                    as: 'seller',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'password', 'status']
+                    }
+                },
+            ]
         })
+
+        res.send({
+            status: 'success',
+            data
+        });
     }catch (err){
         console.log(err)
         res.send({

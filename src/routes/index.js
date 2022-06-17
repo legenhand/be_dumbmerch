@@ -2,8 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const { addUser } = require('../controllers/register');
-const {login} = require("../controllers/login");
+const { addUser, getUser} = require('../controllers/user');
 const {addProduct, getAllProduct, getProductDetail, updateProduct, deleteProduct} = require("../controllers/product");
 const {addCategory, getAllCategory, getCategoryDetail, updateCategory, deleteCategory} = require("../controllers/category");
 const {addTransaction, getAllTransaction} = require("../controllers/transaction");
@@ -12,7 +11,7 @@ const {addTransaction, getAllTransaction} = require("../controllers/transaction"
 router.post("/register", addUser);
 
 // Route Login
-router.post("/login", login);
+router.post("/login", getUser);
 
 // Route Product
 router.post("/product", addProduct);
@@ -31,6 +30,6 @@ router.delete("/category/:id", deleteCategory);
 // Route transaction
 
 router.post("/transaction", addTransaction);
-router.post("/transactions", getAllTransaction);
+router.get("/transactions", getAllTransaction);
 
 module.exports = router;
