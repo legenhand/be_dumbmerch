@@ -4,7 +4,11 @@ exports.addProduct = async (req, res) => {
     try {
         console.log(req.body);
         const { category: categoryName , ...data } = req.body;
-        const newProduct = await product.create(data);
+        const newProduct = await product.create({
+            ...req.body,
+            image: req.file.filename,
+            idUser: req.user.id
+        });
         const categoryData = await category.findOne({
             where: {
                 name: categoryName,

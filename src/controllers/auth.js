@@ -94,7 +94,7 @@ exports.login = async (req,res) => {
             id: userExist.id
         }
 
-        const token = jwt.sign(data, 'IniPrivateKeyBatch35')
+        const token = jwt.sign(data, process.env.TOKEN_KEY || 'PisangGoreng720')
         res.status(200).send({
             status: "success...",
             data: {

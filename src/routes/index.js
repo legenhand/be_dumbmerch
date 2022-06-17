@@ -1,12 +1,12 @@
 const express = require("express");
 
 const router = express.Router();
-
-const { addUser, getUser} = require('../controllers/user');
+const {auth} = require('../middlewares/auth')
 const {addProduct, getAllProduct, getProductDetail, updateProduct, deleteProduct} = require("../controllers/product");
 const {addCategory, getAllCategory, getCategoryDetail, updateCategory, deleteCategory} = require("../controllers/category");
 const {addTransaction, getAllTransaction} = require("../controllers/transaction");
 const {register, login} = require("../controllers/auth");
+const {uploadFile} = require("../middlewares/uploadFile");
 
 // Route Register
 router.post("/register", register);
@@ -15,22 +15,22 @@ router.post("/register", register);
 router.post("/login", login);
 
 // Route Product
-router.post("/product", addProduct);
+router.post("/product", auth, uploadFile('image'), addProduct);
 router.get("/products", getAllProduct);
 router.get("/product/:id", getProductDetail);
-router.patch("/product/:id", updateProduct);
-router.delete("/product/:id", deleteProduct);
+router.patch("/product/:id", auth, updateProduct);
+router.delete("/product/:id", auth, deleteProduct);
 
 // Route Category
-router.post("/category", addCategory);
+router.post("/category", auth, addCategory);
 router.get("/categories", getAllCategory);
 router.get("/category/:id", getCategoryDetail);
-router.patch("/category/:id", updateCategory);
-router.delete("/category/:id", deleteCategory);
+router.patch("/category/:id", auth, updateCategory);
+router.delete("/category/:id", auth, deleteCategory);
 
 // Route transaction
 
-router.post("/transaction", addTransaction);
-router.get("/transactions", getAllTransaction);
+router.post("/transaction", auth, addTransaction);
+router.get("/transactions", auth, getAllTransaction);
 
 module.exports = router;
