@@ -6,12 +6,13 @@ const { addUser, getUser} = require('../controllers/user');
 const {addProduct, getAllProduct, getProductDetail, updateProduct, deleteProduct} = require("../controllers/product");
 const {addCategory, getAllCategory, getCategoryDetail, updateCategory, deleteCategory} = require("../controllers/category");
 const {addTransaction, getAllTransaction} = require("../controllers/transaction");
+const {register, login} = require("../controllers/auth");
 
 // Route Register
-router.post("/register", addUser);
+router.post("/register", register);
 
 // Route Login
-router.post("/login", getUser);
+router.post("/login", login);
 
 // Route Product
 router.post("/product", addProduct);
